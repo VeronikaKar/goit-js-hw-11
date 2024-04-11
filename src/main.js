@@ -1,66 +1,56 @@
+
+// Описаний у документації
+import SimpleLightbox from "simplelightbox";
+// Додатковий імпорт стилів
+import "simplelightbox/dist/simple-lightbox.min.css";
 // Описаний у документації
 import iziToast from "izitoast";
 // Додатковий імпорт стилів
 import "izitoast/dist/css/iziToast.min.css";
+import { showMessage } from './js/render-functions.js';
+import { hiddenLoader,showLoader } from './js/render-functions.js';
+import { searchForm } from './js/pixabay-api.js';
+import { createGalleryMarkup } from './js/render-functions.js';
+import { clearGallery } from './js/render-functions.js';
+import errorIcon from './img/bi_x-octagon.svg'
 
 const form = document.querySelector('.form');
 const input = document.querySelector('.text-input');
-import errorIcon from "../img/bi_x-octagon.svg"
-// const loader = document.querySelector('.loader');
-function showMessage(icon, message, bgr) {
-  iziToast.show({
-    iconUrl:icon,
-    titleColor: 'White',
-    titleSize: '24px',
-    message,
-    messageColor: 'White',
-    messageSize: '16px',
-    backgroundColor: bgr,
-    position: 'topRight',
-    timeout: 3000,
-});
-}
+const gallery = document.querySelector('gallery')
+    const lightbox = new SimpleLightbox('#gallery-link', 
+{ 
+    captions: true,
+    captionDelay: 250,
+    captionsData: 'alt',
+    captionPosition: 'bottom', 
+   
+}); 
+
 form.addEventListener("submit", onSubmit);
+
 function onSubmit(event) {
     event.preventDefault();
-    const searchQuery = event.currentTarget.elements.search.value.trim();
-    ;
-    getPhotos(searchQuery)
-        .then(array => {
-            if (array.length === 0) {
-                iziToast.show({
-                    position: 'topRight',
-                    title: 'Info',
-                    message: 'Sorry, there are no images matching your search query. Please try again!',
-                });
-                //showMessage(errorIcon,'Sorry, there are no images matching your search query. Please try again!','#ef4040')
+    const searchQuery = event.currentTarget.search.value.trim();
+    showLoader();
+    clearGallery();
+    searchForm(searchQuery)
+        .then(res => {
+            if (res.results && res.results.length === 0) {
+                showMessage(errorIcon, 'Sorry, there are no images matching your search query. Please try again!', '#ef4040');
             } else {
-                createGalleryMarkup(array);
-                lightbox.refresh();
+                const galleryMarkup = createGalleryMarkup(res.results);
+                if (galleryMarkup) {
+                    gallery.innerHTML = galleryMarkup;
+                    lightbox.refresh();
+                } else {
+                    console.error('Error: createGalleryMarkup returned undefined or not an array.');
+                }
             }
-    })
-
-        .catch((err) => {
-            console.log('Error:', err); iziToast.error({
-                position: 'topRight',
-                title: 'Error',
-                message:
-                    '',
-            });
         })
-}
-export function clearGallery() {
-  const gallery = document.querySelector('.gallery');
-  gallery.innerHTML = '';
-}
-
-function createGalleryMarkup(array) {
-  return array
-    .map(
-    //   (image) =>
-    // //     `<li class="gallary-item">
-    // //     <img src="${image.urls.small}" alt="${image.description}">
-    // //   </li>`
-    )
-    .join("");
+        .catch(err => {
+            console.error('Error:', err); 
+        })
+        .finally(() => {
+            hiddenLoader();
+        });
 }

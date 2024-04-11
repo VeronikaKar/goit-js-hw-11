@@ -8,14 +8,13 @@ export function searchForm(query) {
         orientation: `horizontal`,
         safesearch: true
     })
-
-    return fetch(`${pixaBay}?${params}`)
+ const url = `https://pixabay.com/api/?${params}`;
+    return fetch(url)
 
     .then(res => {
-        return res.json();
-      })
-      .catch(err => {
-        throw new Error(err.status);
-      });
-   
+   if (!res.ok) {
+      throw new Error(res.status);
+    }
+    return res.json();
+  });
 };

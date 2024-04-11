@@ -5,7 +5,7 @@
   margin-bottom: 32px;
 }
 
-.input {
+.text-input {
   width: 272px;
   border-radius: 4px;
   background: #fff;
@@ -18,11 +18,11 @@
   margin-right: 8px;
 }
 
-.input:hover {
+.text-input:hover {
   border: 1px solid #000;
 }
 
-.input:focus {
+.text-input:focus {
   outline: none;
   border: 1px solid #4e75ff;
 }
