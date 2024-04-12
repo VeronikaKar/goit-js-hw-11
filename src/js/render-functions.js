@@ -4,6 +4,8 @@ import iziToast from "izitoast";
 // Додатковий імпорт стилів
 import "izitoast/dist/css/iziToast.min.css";
 
+const loader = document.querySelector('.loader');
+  
 export function showMessage(icon, message, bgr) {
   iziToast.show({
     iconUrl:icon,
@@ -19,20 +21,19 @@ export function showMessage(icon, message, bgr) {
 }
 
 export function showLoader() {
-  const loader = document.querySelector('.loader');
+
   loader.classList.remove("visually-hidden");
 }
 
 export function hiddenLoader() { 
-  const loader = document.querySelector('.loader');
+
   loader.classList.add("visually-hidden");
 }
-export function clearGallery() {
-  const gallery = document.querySelector('.gallery');
-  gallery.innerHTML = '';
+export function clearGallery(ref) {
+  
+  ref.innerHTML = '';
 }
 export function createGalleryMarkup(array) {
-  const gallery = document.querySelector('.gallery');
   return array
     .map(
       (image) => `<li class="gallery-item">

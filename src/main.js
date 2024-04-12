@@ -16,8 +16,8 @@ import errorIcon from './img/bi_x-octagon.svg'
 
 const form = document.querySelector('.form');
 const input = document.querySelector('.text-input');
-const gallery = document.querySelector('gallery')
-    const lightbox = new SimpleLightbox('#gallery-link', 
+const gallery = document.querySelector('.gallery');
+    const lightbox = new SimpleLightbox('.gallery a', 
 { 
     captions: true,
     captionDelay: 250,
@@ -32,20 +32,16 @@ function onSubmit(event) {
     event.preventDefault();
     const searchQuery = event.currentTarget.search.value.trim();
     showLoader();
-    clearGallery();
+    clearGallery(gallery);
     searchForm(searchQuery)
-        .then(res => {
-            if (res.results && res.results.length === 0) {
-                showMessage(errorIcon, 'Sorry, there are no images matching your search query. Please try again!', '#ef4040');
-            } else {
-                const galleryMarkup = createGalleryMarkup(res.results);
-                if (galleryMarkup) {
-                    gallery.innerHTML = galleryMarkup;
-                    lightbox.refresh();
-                } else {
-                    console.error('Error: createGalleryMarkup returned undefined or not an array.');
-                }
+        .then(res => {console.log(res);
+            if (res.hits.length === 0) {
+                return showMessage(errorIcon, 'Sorry, there are no images matching your search query. Please try again!', '#ef4040');
             }
+                const galleryMarkup = createGalleryMarkup(res.hits);
+            gallery.innerHTML = galleryMarkup;
+            lightbox.refresh();
+            
         })
         .catch(err => {
             console.error('Error:', err); 
